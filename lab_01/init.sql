@@ -13,6 +13,14 @@ CREATE TABLE IF NOT EXISTS player_info (
     link VARCHAR(40)
 );
 
+\copy player_info from '~/hdd/datasets/NHL_game_stats/player_info.csv' delimiter ',' csv header;
+
+ALTER TABLE player_info DROP COLUMN link;
+-- solution with temp table (insert in temp table and then move to normal table with command under this line):
+-- INSERT INTO player_info (player_id, firstName, lastName, nationality, birthCity, primaryPosition, birthDate)
+-- SELECT player_id, firstName, lastName, nationality, birthCity, primaryPosition, birthDate FROM temp_player_info;
+
+
 CREATE TABLE IF NOT EXISTS team_info (
     team_id INT PRIMARY KEY,
     franshizeId INT NOT NULL,
@@ -21,6 +29,11 @@ CREATE TABLE IF NOT EXISTS team_info (
     abbreviation VARCHAR(3) NOT NULL,
     link VARCHAR(40)
 );
+
+\copy team_info from '~/hdd/datasets/NHL_game_stats/team_info.csv' delimiter ',' csv header;
+
+ALTER TABLE team_info DROP COLUMN link;
+
 
 CREATE TABLE IF NOT EXISTS game (
     game_id INT PRIMARY KEY,
@@ -42,6 +55,9 @@ CREATE TABLE IF NOT EXISTS game (
     FOREIGN KEY (away_team_id) REFERENCES team_info(team_id),
     FOREIGN KEY (home_team_id) REFERENCES team_info(team_id)
 );
+
+\copy game from '~/hdd/datasets/NHL_game_stats/game.csv' delimiter ',' csv header;
+
 
 CREATE TABLE IF NOT EXISTS game_goalie_stats (
     game_id INT NOT NULL,
@@ -67,6 +83,9 @@ CREATE TABLE IF NOT EXISTS game_goalie_stats (
     FOREIGN KEY (player_id) REFERENCES player_info(player_id),
     FOREIGN KEY (team_id) REFERENCES team_info(team_id)
 );
+
+\copy game_goalie_stats from '~/hdd/datasets/NHL_game_stats/game_goalie_stats.csv' delimiter ',' csv header null 'NA';
+
 
 CREATE TABLE IF NOT EXISTS game_skaters_stats (
     game_id INT NOT NULL,
@@ -96,18 +115,11 @@ CREATE TABLE IF NOT EXISTS game_skaters_stats (
     FOREIGN KEY (team_id) REFERENCES team_info(team_id)
 );
 
-CREATE TABLE IF NOT EXISTS game_shifts (
-    game_id INT NOT NULL,
-    player_id INT NOT NULL,
-    period INT NOT NULL,
-    shift_start INT NOT NULL,
-    shift_end INT NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(game_id),
-    FOREIGN KEY (player_id) REFERENCES player_info(player_id)
-);
+\copy game_skaters_stats from '~/hdd/datasets/NHL_game_stats/game_skater_stats.csv' delimiter ',' csv header null 'NA';
+
 
 CREATE TABLE IF NOT EXISTS game_plays (
-    play_id VARCHAR(15) PRIMARY KEY,
+    play_id VARCHAR(15),
     game_id INT NOT NULL,
     play_num INT NOT NULL,
     team_id_for INT,
@@ -127,10 +139,29 @@ CREATE TABLE IF NOT EXISTS game_plays (
     st_x INT,
     st_y INT,
     rink_side VARCHAR(5),
+    PRIMARY KEY (game_id, play_num),
     FOREIGN KEY (game_id) REFERENCES game(game_id),
     FOREIGN KEY (team_id_for) REFERENCES team_info(team_id),
     FOREIGN KEY (team_id_against) REFERENCES team_info(team_id)
 );
+
+\copy game_plays from '~/hdd/datasets/NHL_game_stats/game_plays.csv' delimiter ',' csv header null 'NA';
+
+ALTER TABLE game_plays DROP COLUMN play_id;
+
+
+CREATE TABLE IF NOT EXISTS game_shifts (
+    game_id INT NOT NULL,
+    player_id INT NOT NULL,
+    period INT NOT NULL,
+    shift_start INT NOT NULL,
+    shift_end INT NOT NULL,
+    FOREIGN KEY (game_id) REFERENCES game(game_id),
+    FOREIGN KEY (player_id) REFERENCES player_info(player_id)
+);
+
+\copy game_shifts from '~/hdd/datasets/NHL_game_stats/game_shifts.csv' delimiter ',' csv header null 'NA';
+
 
 CREATE TABLE IF NOT EXISTS game_plays_players (
     play_id VARCHAR(15) NOT NULL,
@@ -138,10 +169,13 @@ CREATE TABLE IF NOT EXISTS game_plays_players (
     play_num INT NOT NULL,
     player_id INT NOT NULL,
     playerType VARCHAR(15) NOT NULL,
-    FOREIGN KEY (play_id) REFERENCES game_plays(play_id),
+    FOREIGN KEY (game_id, play_num) REFERENCES game_plays(game_id, play_num),
     FOREIGN KEY (game_id) REFERENCES game(game_id),
     FOREIGN KEY (player_id) REFERENCES player_info(player_id)
 );
+
+\copy game_plays_players from '~/hdd/datasets/NHL_game_stats/game_plays_players.csv' delimiter ',' csv header null 'NA';
+
 
 CREATE TABLE IF NOT EXISTS game_teams_stats (
     game_id INT NOT NULL,
@@ -163,12 +197,5 @@ CREATE TABLE IF NOT EXISTS game_teams_stats (
     FOREIGN KEY (team_id) REFERENCES team_info(team_id)
 );
 
-\copy player_info from '~/hdd/datasets/NHL_game_stats/player_info.csv' delimiter ',' csv header;
-\copy team_info from '~/hdd/datasets/NHL_game_stats/team_info.csv' delimiter ',' csv header ;
-\copy game from '~/hdd/datasets/NHL_game_stats/game.csv' delimiter ',' csv header ;
-\copy game_goalie_stats from '~/hdd/datasets/NHL_game_stats/game_goalie_stats.csv' delimiter ',' csv header null 'NA';
-\copy game_skaters_stats from '~/hdd/datasets/NHL_game_stats/game_skater_stats.csv' delimiter ',' csv header null 'NA';
 \copy game_teams_stats from '~/hdd/datasets/NHL_game_stats/game_teams_stats.csv' delimiter ',' csv header null 'NA';
-\copy game_shifts from '~/hdd/datasets/NHL_game_stats/game_shifts.csv' delimiter ',' csv header null 'NA';
-\copy game_plays from '~/hdd/datasets/NHL_game_stats/game_plays.csv' delimiter ',' csv header null 'NA';
-\copy game_plays_players from '~/hdd/datasets/NHL_game_stats/game_plays_players.csv' delimiter ',' csv header null 'NA';
+
