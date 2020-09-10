@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS player_info (
     birthCity VARCHAR(30) NOT NULL,
     primaryPosition VARCHAR(2) NOT NULL,
     birthDate DATE NOT NULL,
-    link VARCHAR(40)
+    link VARCHAR(40),
+    CHECK (char_length(firstName) > 0 AND char_length(lastName) > 0)
 );
 
 \copy player_info from '~/hdd/datasets/NHL_game_stats/player_info.csv' delimiter ',' csv header;
@@ -39,7 +40,7 @@ CREATE TABLE IF NOT EXISTS game (
     game_id INT PRIMARY KEY,
     season INT NOT NULL,
     type VARCHAR(1) NOT NULL,
-    date_time DATE NOT NULL,
+    date_time DATE NOT NULL CHECK(date_time > '2000-05-01'),
     date_time_GMT TIMESTAMP NOT NULL,
     away_team_id INT NOT NULL,
     home_team_id INT NOT NULL,
@@ -76,9 +77,9 @@ CREATE TABLE IF NOT EXISTS game_goalie_stats (
     evenShotsAgainst INT NOT NULL,
     powerPlayShotsAgainst INT NOT NULL,
     decision VARCHAR(3) NOT NULL,
-    savePrecentage NUMERIC(11, 8),
-    powerPlaySavePrecentage NUMERIC(11, 8),
-    evenStrengthSavePrecentage NUMERIC(11, 8),
+    savePrecentage NUMERIC(11, 8) CHECK(savePrecentage IS NULL OR savePrecentage <= 100),
+    powerPlaySavePrecentage NUMERIC(11, 8) CHECK(powerPlaySavePrecentage IS NULL OR powerPlaySavePrecentage <= 100),
+    evenStrengthSavePrecentage NUMERIC(11, 8) CHECK(evenStrengthSavePrecentage IS NULL OR evenStrengthSavePrecentage <= 100),
     FOREIGN KEY (game_id) REFERENCES game(game_id),
     FOREIGN KEY (player_id) REFERENCES player_info(player_id),
     FOREIGN KEY (team_id) REFERENCES team_info(team_id)
@@ -190,7 +191,7 @@ CREATE TABLE IF NOT EXISTS game_teams_stats (
     pim INT NOT NULL,
     powerPlayOpportunities INT NOT NULL,
     powerPlayGoals INT NOT NULL,
-    faceoffWinPercentage NUMERIC(11, 8) NOT NULL,
+    faceoffWinPercentage NUMERIC(11, 8) NOT NULL CHECK(faceoffWinPercentage <= 100),
     giveaways INT NOT NULL,
     takeaways INT NOT NULL,
     FOREIGN KEY (game_id) REFERENCES game(game_id),
