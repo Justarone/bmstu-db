@@ -1,3 +1,5 @@
+-- Проверяем, действительно ли суммарное кол-во смен за игру соотвествует игровому времени
+
 WITH calculated AS (
     SELECT game_id, player_id, SUM(shift_end - shift_start) AS toi
     FROM game_shifts

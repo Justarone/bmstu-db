@@ -1,6 +1,6 @@
--- Выводит всех игроков какой-то команды в заданные периоды времени
+-- Выводит всех игроков какой-то команды (можно и нескольких, в принципе, если слегка поменять условие) в заданные периоды времени
 
-WITH games_in_interval (game_id) AS (
+WITH games_in_interval (game_id, date_time) AS (
     SELECT game_id, date_time
     FROM game
     WHERE date_time > '2010-01-01' AND date_time < '2020-01-01'

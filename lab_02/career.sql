@@ -1,3 +1,4 @@
+-- Для заданного игрока находим все клубы, в которых он играл в ризличные периоды (то есть можно посмотреть кареьеру игрока)
 WITH career AS (
     SELECT firstName, lastName, team_id,
     MIN(game.date_time) AS from_date, 
