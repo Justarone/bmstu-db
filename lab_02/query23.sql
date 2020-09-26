@@ -28,14 +28,15 @@ FROM teams_rivals
 ORDER BY team_id;
 
 WITH RECURSIVE Friends (team_id, rival, Level) AS (
-    SELECT team_id, rival, 0 AS Level
+    SELECT team_id, rival, 1 AS Level
     FROM teams_rivals
-    WHERE team_id = 1
+    -- WHERE team_id = 1
     UNION ALL
     SELECT f.team_id, tr.rival, Level + 1
     FROM teams_rivals AS tr 
     INNER JOIN Friends AS f
-    ON f.rival = tr.team_id AND Level < 20
+    ON f.rival = tr.team_id AND Level < 2
 )
-SELECT team_id, rival, Level 
-FROM Friends;
+SELECT team_id, rival AS friend, Level 
+FROM Friends
+WHERE Level = 2;
