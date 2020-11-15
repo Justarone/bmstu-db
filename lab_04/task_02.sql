@@ -1,4 +1,5 @@
 -- Пользовательская агрегатная функция CLR
+-- Среднее кол-во голов среди всех игроков лиги
 
 CREATE OR REPLACE FUNCTION avg_goals_all_players()
 RETURNS NUMERIC
