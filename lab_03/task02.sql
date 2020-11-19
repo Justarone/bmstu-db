@@ -8,13 +8,12 @@ RETURNS TABLE (
 )
 AS $$
 BEGIN
-    RETURN QUERY EXECUTE 'SELECT pi.player_id, count(*) as game_cnt
+    RETURN QUERY SELECT pi.player_id, count(*) as game_cnt
     FROM player_info pi
     JOIN game_skaters_stats gss
     ON gss.player_id = pi.player_id
     GROUP BY pi.player_id
-    HAVING count(*) >= $1;'
-    USING MIN_GAMES;
+    HAVING count(*) >= MIN_GAMES;
 END;
 $$ LANGUAGE PLPGSQL;
 
