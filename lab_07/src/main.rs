@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate diesel;
+
 use std::error::Error;
 use postgres::{ Client, NoTls };
 
@@ -7,8 +10,11 @@ mod sql;
 mod constants;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut client = Client::connect(constants::CONNECTION_URL, NoTls).expect("Can't connect to db");
-    object::run_all(&mut client)?;
-    json::run_all(&mut client)?;
-    sql::run_all()
+    {
+        let mut client = Client::connect(constants::CONNECTION_URL, NoTls)?;
+        object::run_all(&mut client)?;
+        json::run_all(&mut client)?;
+    }
+    sql::run_all();
+    Ok(())
 }
