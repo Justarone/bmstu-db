@@ -124,7 +124,7 @@ fn oldest_player(players: &[PlayerInfo]) {
 }
 
 fn players_from_moscow(players: &[PlayerInfo]) {
-    println!("PLAYERS FROM MOSCOW");
+    println!("\nPLAYERS FROM MOSCOW");
     for p in players.iter().filter(|p| p.birth_city == "Moscow") {
         println!("{:<20} {:<20} {:?}", p.first_name, p.last_name, p.birth_date);
     }

@@ -1,24 +1,8 @@
 use std::error::Error;
 use chrono::NaiveDate;
-use serde_derive::Deserialize;
-
-use super::constants;
+use super::json::{ Career };
 
 mod utils;
-
-type Career = Vec<CareerPart>;
-
-#[derive(Debug, Clone, Deserialize)]
-struct CareerPart {
-    pub team_id: i32,
-    pub interval: Interval,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-struct Interval {
-    pub from: String,
-    pub to: String,
-}
 
 #[derive(Debug, Clone)]
 struct PlayerInfo {
